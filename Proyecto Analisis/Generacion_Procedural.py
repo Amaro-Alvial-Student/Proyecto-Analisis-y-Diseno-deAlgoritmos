@@ -69,7 +69,7 @@ imagen.save("Textura.png")
 imagen = cv2.imread('Textura.png')
 
 # Definir los puntos de la espada (puedes ajustar estos puntos según la forma deseada)
-puntos_espada = np.array([[400, 800], [400, 200], [300, 100], [200, 200], [200, 800]], np.int32)
+puntos_espada = np.array([[400, 800], [400, 200], [300, 100], [200, 200], [200, 00]], np.int32)
 
 # Crear una máscara en blanco con el mismo tamaño que la imagen
 mascara = np.zeros_like(imagen)
