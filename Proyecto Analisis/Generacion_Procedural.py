@@ -1,5 +1,7 @@
 from PIL import Image, ImageDraw
 import random
+import cv2
+import numpy as np
 
 # Dimensiones de la imagen y de la matriz
 ancho = 600
@@ -63,5 +65,26 @@ for i in range(filas):
 # Guardar la imagen generada
 imagen.save("Textura.png")
 
+# Cargar la imagen generada
+imagen = cv2.imread('Textura.png')
+
+# Definir los puntos de la espada (puedes ajustar estos puntos según la forma deseada)
+puntos_espada = np.array([[400, 800], [400, 200], [300, 100], [200, 200], [200, 800]], np.int32)
+
+# Crear una máscara en blanco con el mismo tamaño que la imagen
+mascara = np.zeros_like(imagen)
+
+# Dibujar la forma de la espada en la máscara
+cv2.fillPoly(mascara, [puntos_espada], (255, 255, 255))
+
+# Aplicar la máscara a la imagen para recortarla
+imagen_recortada = cv2.bitwise_and(imagen, mascara)
+
+# Guardar la imagen recortada
+cv2.imwrite("Textura_recortada.png", imagen_recortada)
+
+# Mostrar la imagen recortada
+cv2.imshow('Imagen recortada', imagen_recortada)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 # Mostrar la imagen generada
-imagen.show()
