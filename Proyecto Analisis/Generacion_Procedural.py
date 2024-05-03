@@ -25,18 +25,35 @@ paletas = [
 # Crear una nueva matriz para representar los colores de los cuadrados
 matriz_color = [[(255, 255, 255) for _ in range(columnas)] for _ in range(filas)]
 
+def diferencia_de_color(color1, color2):
+    # Calcula la diferencia total de color entre dos colores RGB
+    r_diff = abs(color1[0] - color2[0])
+    g_diff = abs(color1[1] - color2[1])
+    b_diff = abs(color1[2] - color2[2])
+    return r_diff + g_diff + b_diff
+
+def generar_color_con_restriccion(color_base, diferencia_minima=400):
+    # Genera un color aleatorio dentro de una cierta diferencia mínima de color de color_base
+    while True:
+        nuevo_color = random.choice(random.choice(paletas))
+        if diferencia_de_color(color_base, nuevo_color) >= diferencia_minima:
+            return nuevo_color
+
 # Función para generar una imagen de forma procedural con reglas utilizando una matriz
 def generacion_procedural(matriz_color):
     # Seleccionar una paleta aleatoria
     paleta = random.choice(paletas)
+    
+    # Generar un color base aleatorio
+    color_base = random.choice(paleta)
 
     # Iterar sobre las filas y columnas de la matriz
     for i in range(filas):
         for j in range(columnas):
             # Seleccionar un color aleatorio de la paleta
-            color = random.choice(paleta)
+            color_restringido = generar_color_con_restriccion(color_base, diferencia_minima=400)
             # Actualizar el color en la matriz
-            matriz_color[i][j] = color
+            matriz_color[i][j] = color_restringido
 
 # Generar la matriz de colores de forma procedural
 generacion_procedural(matriz_color)
