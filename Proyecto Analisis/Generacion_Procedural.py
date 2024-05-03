@@ -86,7 +86,22 @@ imagen.save("Textura.png")
 imagen = cv2.imread('Textura.png')
 
 # Definir los puntos de la espada (puedes ajustar estos puntos según la forma deseada)
-puntos_espada = np.array([[400, 800], [400, 200], [300, 100], [200, 200], [200, 800]], np.int32)
+puntos_espada = np.array([[random.randint(350, 450), 800],
+                          [random.randint(350, 450), random.randint(750, 780)],
+                          #[random.randint(400, 450), random.randint(650, 750)],
+                          [random.randint(350, 450), random.randint(550, 650)],
+                          #[random.randint(400, 450), random.randint(450, 550)],
+                          [random.randint(350, 450), random.randint(350, 450)],
+                          #[random.randint(400, 450), random.randint(250, 350)], 
+                          [random.randint(350, 450), random.randint(150, 250)], 
+                          [random.randint(150, 300), random.randint(50, 150)], 
+                          [random.randint(150,250), random.randint(150,250)],
+                          #[random.randint(200,250), random.randint(350,450)],
+                          [random.randint(150,250), random.randint(450,550)],
+                          #[random.randint(200,250), random.randint(550,650)],
+                          [random.randint(150,250), random.randint(650,750)],
+                          #[random.randint(200,250), random.randint(750,780)],          
+                          [random.randint(150,250), 800]], np.int32)
 
 # Crear una máscara en blanco con el mismo tamaño que la imagen
 mascara = np.zeros_like(imagen)
@@ -104,4 +119,3 @@ cv2.imwrite("Textura_recortada.png", imagen_recortada)
 cv2.imshow('Imagen recortada', imagen_recortada)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-# Mostrar la imagen generada
