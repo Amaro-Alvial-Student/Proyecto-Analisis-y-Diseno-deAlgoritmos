@@ -102,4 +102,3 @@ cv2.imwrite("Textura_recortada.png", imagen_recortada)
 cv2.imshow('Imagen recortada', imagen_recortada)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-# Mostrar la imagen generada
