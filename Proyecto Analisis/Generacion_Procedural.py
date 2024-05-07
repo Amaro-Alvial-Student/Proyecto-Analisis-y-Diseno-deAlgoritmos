@@ -119,3 +119,57 @@ cv2.imwrite("Textura_recortada.png", imagen_recortada)
 cv2.imshow('Imagen recortada', imagen_recortada)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+
+# Nivel del jugador (constante)
+nivel = 13
+
+# Empezamos con las estadísticas
+# AF: Ataque físico
+# AM: Ataque mágico
+# VA: Velocidad de ataque
+# RV: Robo de vida
+# Dur: Durabilidad
+# PC: Probabilidad de crítico
+# DC: Daño crítico
+def Estadisticas(nivel):
+    AF=random.randint(nivel*1,nivel*5)
+    AM=random.randint(nivel*1,nivel*5)
+    VA=random.randint(nivel*1,nivel*5)
+    RV=random.randint(nivel*1,nivel*5)
+    Dur=random.randint(1,100)
+    PC=random.randint(1,100)
+    DC=random.randint(1,100)
+    efecto=Efecto()
+    arma=[AF,AM,VA,RV,Dur,PC,DC,efecto]
+    
+    return(arma)
+def Efecto():
+    efecto=random.choice(["Fuego","Hielo","Veneno","Luz","Oscuridad","Aturdimiento","Looteo"])
+    return(efecto)
+def Arma(nivel):
+    arma=Estadisticas(nivel)
+    
+    prob=random.randint(1,100)
+    if (prob<=10):
+        efecto2=Efecto()
+        arma=np.append(arma,efecto2)
+    else:
+        arma=np.append(arma,"   ")
+    if (prob==1):
+        efecto3=Efecto()
+        arma=np.append(arma,efecto3)
+    else:
+        arma=np.append(arma,"   ")
+    return arma
+
+arma=Arma(nivel)
+datos_arma=["Ataque fisico","Ataque magico","Velocidad de ataque","Robo de vida","Durabilidad","Probabilidad de critico","Dano critico","Efecto/s","    ","    "]
+datos_finales=np.array([[datos_arma],[arma]])
+datos_finales=datos_finales.T
+
+with open("archivo.txt", "w") as archivo:
+    for fila in datos_finales:
+        fila_str = " ".join(map(str, fila))
+        archivo.write(fila_str + "\n")
+    archivo.close()
