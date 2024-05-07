@@ -5,9 +5,9 @@ import numpy as np
 
 # Dimensiones de la imagen y de la matriz
 ancho = 600
-altura = 1200
+altura = 1010
 filas = 50
-columnas = 28
+columnas = 30
 
 # Tamaño de cada cuadrado
 tamano_textura = ancho // columnas
@@ -24,8 +24,7 @@ paletas_filos = [
     [(255, 0, 255),(128, 20, 150),(250, 215, 0),(250, 250, 250)]       # Paleta de colores de lujo
 ]
 
-paletas_mangos = [
-    [(245, 245, 220), (210, 180, 140), (160, 82, 45), (139, 69, 19)],     # Paleta de tonos tierra
+paletas_mangos = [    [(245, 245, 220), (210, 180, 140), (160, 82, 45), (139, 69, 19)],     # Paleta de tonos tierra
     [(128, 0, 128), (0, 128, 128), (255, 165, 0), (255, 69, 0)],          # Paleta de colores vivos
     [(139, 69, 19), (139, 90, 43), (222, 184, 135), (205, 133, 63)],      # Tonos de madera
     [(192, 192, 192), (128, 128, 128), (169, 169, 169), (105, 105, 105)]  # Tonos de metal
