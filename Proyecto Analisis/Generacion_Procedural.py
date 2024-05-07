@@ -5,15 +5,15 @@ import numpy as np
 
 # Dimensiones de la imagen y de la matriz
 ancho = 600
-altura = 900
+altura = 1200
 filas = 50
-columnas = 24
+columnas = 28
 
 # Tamaño de cada cuadrado
 tamano_textura = ancho // columnas
 
 # Paletas de colores
-paletas = [
+paletas_filos = [
     [(245, 245, 220), (210, 180, 140), (160, 82, 45), (139, 69, 19)],  # Paleta de tonos tierra
     [(255, 255, 255), (0, 0, 255), (255, 0, 0), (255, 255, 0)],        # Paleta de colores primarios
     [(128, 0, 128), (0, 128, 128), (255, 165, 0), (255, 69, 0)],       # Paleta de colores vivos
@@ -24,8 +24,16 @@ paletas = [
     [(255, 0, 255),(128, 20, 150),(250, 215, 0),(250, 250, 250)]       # Paleta de colores de lujo
 ]
 
+paletas_mangos = [
+    [(245, 245, 220), (210, 180, 140), (160, 82, 45), (139, 69, 19)],     # Paleta de tonos tierra
+    [(128, 0, 128), (0, 128, 128), (255, 165, 0), (255, 69, 0)],          # Paleta de colores vivos
+    [(139, 69, 19), (139, 90, 43), (222, 184, 135), (205, 133, 63)],      # Tonos de madera
+    [(192, 192, 192), (128, 128, 128), (169, 169, 169), (105, 105, 105)]  # Tonos de metal
+]
+
 # Crear una nueva matriz para representar los colores de los cuadrados
-matriz_color = [[(255, 255, 255) for _ in range(columnas)] for _ in range(filas)]
+matriz_Blanca_Filo = [[(255, 255, 255) for _ in range(columnas)] for _ in range(filas)]
+matriz_Blanca_Mango = [[(255, 255, 255) for _ in range(columnas)] for _ in range(filas)]
 
 def diferencia_de_color(color1, color2):
     # Calcula la diferencia total de color entre dos colores RGB
@@ -34,7 +42,7 @@ def diferencia_de_color(color1, color2):
     b_diff = abs(color1[2] - color2[2])
     return r_diff + g_diff + b_diff
 
-def generar_color_con_restriccion(color_base, diferencia_minima=400):
+def generar_color_con_restriccion(color_base, paletas, diferencia_minima):
     # Genera un color aleatorio dentro de una cierta diferencia mínima de color de color_base
     while True:
         nuevo_color = random.choice(random.choice(paletas))
@@ -42,7 +50,7 @@ def generar_color_con_restriccion(color_base, diferencia_minima=400):
             return nuevo_color
 
 # Función para generar una imagen de forma procedural con reglas utilizando una matriz
-def generacion_procedural(matriz_color):
+def generacion_procedural(matriz_Blanca_Filo, paletas, diferencia_minima):
     # Seleccionar una paleta aleatoria
     paleta = random.choice(paletas)
     
@@ -53,40 +61,71 @@ def generacion_procedural(matriz_color):
     for i in range(filas):
         for j in range(columnas):
             # Seleccionar un color aleatorio de la paleta
-            color_restringido = generar_color_con_restriccion(color_base, diferencia_minima=400)
+            color_restringido = generar_color_con_restriccion(color_base, paletas, diferencia_minima)
             # Actualizar el color en la matriz
-            matriz_color[i][j] = color_restringido
+            matriz_Blanca_Filo[i][j] = color_restringido
 
 # Generar la matriz de colores de forma procedural
-generacion_procedural(matriz_color)
+generacion_procedural(matriz_Blanca_Filo, paletas_filos, 400)
+generacion_procedural(matriz_Blanca_Mango, paletas_mangos, 200)
 
 # Crear una nueva imagen en blanco
-imagen = Image.new("RGB", (ancho, altura), "white")
+imagen_filo = Image.new("RGB", (ancho, altura), "white")
+imagen_mango = Image.new("RGB", (ancho, altura), "white")
 
 # Crear un objeto ImageDraw para dibujar en la imagen
-draw = ImageDraw.Draw(imagen)
+DrawFilo = ImageDraw.Draw(imagen_filo)
+DrawMango = ImageDraw.Draw(imagen_mango)
+
 
 # Dibujar los cuadrados utilizando los colores de la matriz
 for i in range(filas):
     for j in range(columnas):
         # Obtener el color de la matriz
-        color = matriz_color[i][j]
+        color_filo = matriz_Blanca_Filo[i][j]
+        color_mango = matriz_Blanca_Mango[i][j]
         # Calcular las coordenadas del cuadrado
-        x0 = j * tamano_textura
-        y0 = i * tamano_textura
-        x1 = x0 + tamano_textura
-        y1 = y0 + tamano_textura
+        #Para el filo:
+        f_x0 = j * tamano_textura
+        f_y0 = i * tamano_textura
+        f_x1 = f_x0 + tamano_textura
+        f_y1 = f_y0 + tamano_textura
+        #Para el mango:
+        m_x0 = j * tamano_textura
+        m_y0 = i * tamano_textura
+        m_x1 = m_x0 + tamano_textura
+        m_y1 = m_y0 + tamano_textura
+
+
         # Dibujar el cuadrado
-        draw.rectangle([(x0, y0), (x1, y1)], fill=color)
+        DrawFilo.rectangle([(f_x0, f_y0), (f_x1, f_y1)], fill=color_filo)
+        DrawMango.rectangle([(m_x0, m_y0), (m_x1, m_y1)], fill=color_mango)
 
 # Guardar la imagen generada
-imagen.save("Textura.png")
+imagen_filo.save("Textura.png")
+imagen_mango.save("Textura_Mango.png")
 
 # Cargar la imagen generada
-imagen = cv2.imread('Textura.png')
+imagen_filo = cv2.imread('Textura.png')
+imagen_mango = cv2.imread('Textura_Mango.png')
 
-# Definir los puntos de la espada (puedes ajustar estos puntos según la forma deseada)
-puntos_espada = np.array([[random.randint(350, 450), 800],
+punto_der_ensamble = random.randint(350, 450)
+punto_izq_ensamble = random.randint(150, 250)
+
+# Definir los puntos del mango
+puntos_mango = np.array([[punto_izq_ensamble, 800],
+                          [punto_izq_ensamble - random.randint(0,15), random.randint(795, 820)],
+                          [punto_izq_ensamble - random.randint(0,15), random.randint(820, 880)],
+                          [random.randint(250, 290), random.randint(820, 880)],
+                          [random.randint(270, 295), random.randint(900, 1100)],
+                          [random.randint(305, 325), random.randint(900, 1100)],
+                          [random.randint(310, 350), random.randint(820, 880)],
+                          [punto_der_ensamble + random.randint(0,15), random.randint(820, 880)],
+                          [punto_der_ensamble + random.randint(0,15), 800],          
+                          [punto_der_ensamble, 800]], np.int32)
+
+# Definir los puntos de la espada
+puntos_espada = np.array([[punto_der_ensamble, 800],
                           [random.randint(350, 450), random.randint(750, 780)],
                           #[random.randint(400, 450), random.randint(650, 750)],
                           [random.randint(350, 450), random.randint(550, 650)],
@@ -101,21 +140,35 @@ puntos_espada = np.array([[random.randint(350, 450), 800],
                           #[random.randint(200,250), random.randint(550,650)],
                           [random.randint(150,250), random.randint(650,750)],
                           #[random.randint(200,250), random.randint(750,780)],          
-                          [random.randint(150,250), 800]], np.int32)
+                          [punto_izq_ensamble, 800]], np.int32)
 
 # Crear una máscara en blanco con el mismo tamaño que la imagen
-mascara = np.zeros_like(imagen)
+mascara_filo = np.zeros_like(imagen_filo)
+mascara_mango = np.zeros_like(imagen_mango)
 
 # Dibujar la forma de la espada en la máscara
-cv2.fillPoly(mascara, [puntos_espada], (255, 255, 255))
+cv2.fillPoly(mascara_filo, [puntos_espada], (255, 255, 255))
+cv2.fillPoly(mascara_mango, [puntos_mango], (255, 255, 255))
 
 # Aplicar la máscara a la imagen para recortarla
-imagen_recortada = cv2.bitwise_and(imagen, mascara)
+imagen_filo_recortada = cv2.bitwise_and(imagen_filo, mascara_filo)
+imagen_mango_recortada = cv2.bitwise_and(imagen_mango, mascara_mango)
 
 # Guardar la imagen recortada
-cv2.imwrite("Textura_recortada.png", imagen_recortada)
+cv2.imwrite("Textura_filo_recortada.png", imagen_filo_recortada)
+cv2.imwrite("Textura_mango_recortada.png", imagen_mango_recortada)
 
-# Mostrar la imagen recortada
-cv2.imshow('Imagen recortada', imagen_recortada)
+# Cargar las imágenes recortadas
+imagen_filo_recortada = cv2.imread("Textura_filo_recortada.png")
+imagen_mango_recortada = cv2.imread("Textura_mango_recortada.png")
+
+# Superponer imagen_filo_recortada sobre imagen_mango_recortada
+superposicion = cv2.addWeighted(imagen_filo_recortada, 1, imagen_mango_recortada, 1, 0)
+
+# Guardar la imagen superpuesta
+cv2.imwrite("Espada.png", superposicion)
+
+# Mostrar la imagen superpuesta
+cv2.imshow('Superposicion', superposicion)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
