@@ -127,19 +127,13 @@ puntos_mango = np.array([[punto_izq_ensamble, 800],
 # Definir los puntos de la espada
 puntos_espada = np.array([[punto_der_ensamble, 800],
                           [random.randint(350, 450), random.randint(750, 780)],
-                          #[random.randint(400, 450), random.randint(650, 750)],
                           [random.randint(350, 450), random.randint(550, 650)],
-                          #[random.randint(400, 450), random.randint(450, 550)],
                           [random.randint(350, 450), random.randint(350, 450)],
-                          #[random.randint(400, 450), random.randint(250, 350)], 
                           [random.randint(350, 450), random.randint(150, 250)], 
                           [random.randint(150, 300), random.randint(50, 150)], 
                           [random.randint(150,250), random.randint(150,250)],
-                          #[random.randint(200,250), random.randint(350,450)],
                           [random.randint(150,250), random.randint(450,550)],
-                          #[random.randint(200,250), random.randint(550,650)],
-                          [random.randint(150,250), random.randint(650,750)],
-                          #[random.randint(200,250), random.randint(750,780)],          
+                          [random.randint(150,250), random.randint(650,750)],         
                           [punto_izq_ensamble, 800]], np.int32)
 
 # Crear una máscara en blanco con el mismo tamaño que la imagen
@@ -172,3 +166,56 @@ cv2.imwrite("Espada.png", superposicion)
 cv2.imshow('Superposicion', superposicion)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+# Nivel del jugador (constante)
+nivel = 13
+
+# Empezamos con las estadísticas
+# AF: Ataque físico
+# AM: Ataque mágico
+# VA: Velocidad de ataque
+# RV: Robo de vida
+# Dur: Durabilidad
+# PC: Probabilidad de crítico
+# DC: Daño crítico
+def Estadisticas(nivel):
+    AF=random.randint(nivel*1,nivel*5)
+    AM=random.randint(nivel*1,nivel*5)
+    VA=random.randint(nivel*1,nivel*5)
+    RV=random.randint(nivel*1,nivel*5)
+    Dur=random.randint(1,100)
+    PC=random.randint(1,100)
+    DC=random.randint(1,100)
+    efecto=Efecto()
+    arma=[AF,AM,VA,RV,Dur,PC,DC,efecto]
+    
+    return(arma)
+def Efecto():
+    efecto=random.choice(["Fuego","Hielo","Veneno","Luz","Oscuridad","Aturdimiento","Looteo"])
+    return(efecto)
+def Arma(nivel):
+    arma=Estadisticas(nivel)
+    
+    prob=random.randint(1,100)
+    if (prob<=10):
+        efecto2=Efecto()
+        arma=np.append(arma,efecto2)
+    else:
+        arma=np.append(arma,"   ")
+    if (prob==1):
+        efecto3=Efecto()
+        arma=np.append(arma,efecto3)
+    else:
+        arma=np.append(arma,"   ")
+    return arma
+
+arma=Arma(nivel)
+datos_arma=["Ataque fisico","Ataque magico","Velocidad de ataque","Robo de vida","Durabilidad","Probabilidad de critico","Dano critico","Efecto/s","    ","    "]
+datos_finales=np.array([[datos_arma],[arma]])
+datos_finales=datos_finales.T
+
+with open("archivo.txt", "w") as archivo:
+    for fila in datos_finales:
+        fila_str = " ".join(map(str, fila))
+        archivo.write(fila_str + "\n")
+    archivo.close()
