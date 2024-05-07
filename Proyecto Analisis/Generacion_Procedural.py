@@ -32,8 +32,8 @@ paletas_mangos = [
 ]
 
 # Crear una nueva matriz para representar los colores de los cuadrados
-matriz_Blanca_Filo = [[(255, 255, 255) for _ in range(columnas)] for _ in range(filas)]
-matriz_Blanca_Mango = [[(255, 255, 255) for _ in range(columnas)] for _ in range(filas)]
+matriz_Blanca_Filo = [[(0, 0, 0) for _ in range(columnas)] for _ in range(filas)]
+matriz_Blanca_Mango = [[(0, 0, 0) for _ in range(columnas)] for _ in range(filas)]
 
 def diferencia_de_color(color1, color2):
     # Calcula la diferencia total de color entre dos colores RGB
@@ -70,13 +70,12 @@ generacion_procedural(matriz_Blanca_Filo, paletas_filos, 400)
 generacion_procedural(matriz_Blanca_Mango, paletas_mangos, 200)
 
 # Crear una nueva imagen en blanco
-imagen_filo = Image.new("RGB", (ancho, altura), "white")
-imagen_mango = Image.new("RGB", (ancho, altura), "white")
+imagen_filo = Image.new("RGB", (ancho, altura), "black")
+imagen_mango = Image.new("RGB", (ancho, altura), "black")
 
 # Crear un objeto ImageDraw para dibujar en la imagen
 DrawFilo = ImageDraw.Draw(imagen_filo)
 DrawMango = ImageDraw.Draw(imagen_mango)
-
 
 # Dibujar los cuadrados utilizando los colores de la matriz
 for i in range(filas):
@@ -95,8 +94,6 @@ for i in range(filas):
         m_y0 = i * tamano_textura
         m_x1 = m_x0 + tamano_textura
         m_y1 = m_y0 + tamano_textura
-
-
         # Dibujar el cuadrado
         DrawFilo.rectangle([(f_x0, f_y0), (f_x1, f_y1)], fill=color_filo)
         DrawMango.rectangle([(m_x0, m_y0), (m_x1, m_y1)], fill=color_mango)
@@ -105,10 +102,11 @@ for i in range(filas):
 imagen_filo.save("Textura.png")
 imagen_mango.save("Textura_Mango.png")
 
-# Cargar la imagen generada
+# Cargar la imagen generada con cv2
 imagen_filo = cv2.imread('Textura.png')
 imagen_mango = cv2.imread('Textura_Mango.png')
 
+#Definir los puntos en donde se podrá ensamblar el filo con el mango
 punto_der_ensamble = random.randint(350, 450)
 punto_izq_ensamble = random.randint(150, 250)
 
@@ -148,22 +146,22 @@ cv2.fillPoly(mascara_mango, [puntos_mango], (255, 255, 255))
 imagen_filo_recortada = cv2.bitwise_and(imagen_filo, mascara_filo)
 imagen_mango_recortada = cv2.bitwise_and(imagen_mango, mascara_mango)
 
-# Guardar la imagen recortada
-cv2.imwrite("Textura_filo_recortada.png", imagen_filo_recortada)
-cv2.imwrite("Textura_mango_recortada.png", imagen_mango_recortada)
-
-# Cargar las imágenes recortadas
-imagen_filo_recortada = cv2.imread("Textura_filo_recortada.png")
-imagen_mango_recortada = cv2.imread("Textura_mango_recortada.png")
-
 # Superponer imagen_filo_recortada sobre imagen_mango_recortada
-superposicion = cv2.addWeighted(imagen_filo_recortada, 1, imagen_mango_recortada, 1, 0)
+Espada = cv2.addWeighted(imagen_filo_recortada, 1, imagen_mango_recortada, 1, 0)
 
-# Guardar la imagen superpuesta
-cv2.imwrite("Espada.png", superposicion)
+# Definir las coordenadas de inicio y fin de la línea
+x1, y1 = punto_der_ensamble, 800
+x2, y2 = punto_izq_ensamble, 800
+
+# Dibujar la línea negra en la imagen
+grosor = 1
+Espada = cv2.line(Espada, (x1, y1), (x2, y2), (0,0,0), grosor)
+
+#Guardar la imagen en el archivo "Espada.png"
+cv2.imwrite("Espada.png", Espada)
 
 # Mostrar la imagen superpuesta
-cv2.imshow('Superposicion', superposicion)
+cv2.imshow('Espada', Espada)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
