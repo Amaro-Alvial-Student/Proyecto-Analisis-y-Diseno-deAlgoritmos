@@ -4,10 +4,10 @@ import cv2
 import numpy as np
 
 # Dimensiones de la imagen y de la matriz
-ancho = 600
-altura = 1010
-filas = 50
-columnas = 30
+ancho = 720
+altura = 1280
+filas = 64
+columnas = 36
 
 # Tamaño de cada cuadrado
 tamano_textura = ancho // columnas
