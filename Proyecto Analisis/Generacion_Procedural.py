@@ -153,9 +153,8 @@ imagen_filo = cv2.imread('Textura.png')
 imagen_mango = cv2.imread('Textura_Mango.png')
 
 #Seleccionar el tipo de arma
-#tipo = random.choice([0,1,2]) # 0 para espada, 1 para hacha, 2 para lanza.
+tipo = random.choice([0,1,2]) # 0 para espada, 1 para hacha, 2 para lanza.
 
-tipo = 1
 if (tipo == 0):
     # Definir los puntos en donde se podrá ensamblar el filo con el mango
     punto_der_ensamble = random.randint(350, 450)
