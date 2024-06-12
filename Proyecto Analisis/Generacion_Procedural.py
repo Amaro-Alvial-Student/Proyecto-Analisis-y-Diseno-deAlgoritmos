@@ -75,6 +75,7 @@ def generar_arma(nivel):
     else:
         arma.append("   ")
     return arma
+
 # Termino de la definición de funciones.
 
 # Dimensiones de la imagen y de la matriz
@@ -146,44 +147,121 @@ imagen_mango.save("Textura_Mango.png")
 imagen_filo = cv2.imread('Textura.png')
 imagen_mango = cv2.imread('Textura_Mango.png')
 
-# Definir los puntos en donde se podrá ensamblar el filo con el mango
-punto_der_ensamble = random.randint(350, 450)
-punto_izq_ensamble = random.randint(150, 250)
+#Seleccionar el tipo de arma
+tipo = random.choice([0,1,2]) # 0 para espada, 1 para hacha, 2 para lanza.
 
-# Definir los puntos que definiran los bordes del mango
-puntos_mango = np.array([
-    [punto_izq_ensamble, 800],
-    [punto_izq_ensamble - random.randint(0, 15), random.randint(795, 820)],
-    [punto_izq_ensamble - random.randint(0, 15), random.randint(820, 880)],
-    [random.randint(250, 290), random.randint(820, 880)],
-    [random.randint(270, 295), random.randint(900, 1100)],
-    [random.randint(305, 325), random.randint(900, 1100)],
-    [random.randint(310, 350), random.randint(820, 880)],
-    [punto_der_ensamble + random.randint(0, 15), random.randint(820, 880)],
-    [punto_der_ensamble + random.randint(0, 15), 800],
-    [punto_der_ensamble, 800]
-], np.int32)
+if (tipo == 0):
+    # Definir los puntos en donde se podrá ensamblar el filo con el mango
+    punto_der_ensamble = random.randint(350, 450)
+    punto_izq_ensamble = random.randint(150, 250)
 
-# Definir los puntos que definiran los bordes de la espada
-puntos_espada = np.array([
-    [punto_der_ensamble, 800],
-    [random.randint(350, 450), random.randint(750, 780)],
-    [random.randint(350, 450), random.randint(550, 650)],
-    [random.randint(350, 450), random.randint(350, 450)],
-    [random.randint(350, 450), random.randint(150, 250)],
-    [random.randint(150, 300), random.randint(50, 150)],
-    [random.randint(150, 250), random.randint(150, 250)],
-    [random.randint(150, 250), random.randint(450, 550)],
-    [random.randint(150, 250), random.randint(650, 750)],
-    [punto_izq_ensamble, 800]
-], np.int32)
+    # Definir los puntos que definiran los bordes del mango
+    puntos_mango = np.array([
+        [punto_izq_ensamble, 800],
+        [punto_izq_ensamble - random.randint(0, 15), random.randint(795, 820)],
+        [punto_izq_ensamble - random.randint(0, 15), random.randint(820, 880)],
+        [random.randint(250, 290), random.randint(820, 880)],
+        [random.randint(270, 295), random.randint(900, 1100)],
+        [random.randint(305, 325), random.randint(900, 1100)],
+        [random.randint(310, 350), random.randint(820, 880)],
+        [punto_der_ensamble + random.randint(0, 15), random.randint(820, 880)],
+        [punto_der_ensamble + random.randint(0, 15), 800],
+        [punto_der_ensamble, 800]
+    ], np.int32)
+
+    # Definir los puntos que definiran los bordes del filo
+    puntos_filo = np.array([
+        [punto_der_ensamble, 800],
+        [random.randint(350, 450), random.randint(750, 780)],
+        [random.randint(350, 450), random.randint(550, 650)],
+        [random.randint(350, 450), random.randint(350, 450)],
+        [random.randint(350, 450), random.randint(150, 250)],
+        [random.randint(150, 300), random.randint(50, 150)],
+        [random.randint(150, 250), random.randint(150, 250)],
+        [random.randint(150, 250), random.randint(450, 550)],
+        [random.randint(150, 250), random.randint(650, 750)],
+        [punto_izq_ensamble, 800]
+    ], np.int32)
+
+    # Definir las coordenadas de inicio y fin de la línea
+    # Para separar el mango del filo
+    x1, y1 = punto_der_ensamble, 800
+    x2, y2 = punto_izq_ensamble, 800
+
+elif(tipo == 1):
+    # Definir los puntos en donde se podrá ensamblar el filo con el mango
+    punto_der_ensamble = random.randint(390, 430)
+    punto_izq_ensamble = random.randint(350, 370)
+    # Definir los puntos que definiran los bordes del mango
+    puntos_mango = np.array([
+        [punto_izq_ensamble, 500],
+        [punto_izq_ensamble - random.randint(0, 15), 900],
+        [punto_der_ensamble + random.randint(0, 15), 900],
+        [punto_der_ensamble, 500]
+    ], np.int32)
+
+    # Definir los puntos que definiran los bordes del filo
+    puntos_filo = np.array([
+        [punto_izq_ensamble, 500],
+        [punto_izq_ensamble - random.randint(0, 50), random.randint(460, 480)],
+        [punto_izq_ensamble - random.randint(50, 100), 500],
+        [punto_izq_ensamble - random.randint(100, 150), 550],
+        [punto_izq_ensamble - random.randint(150, 250), 400],
+        [punto_izq_ensamble - random.randint(100, 150), 300],
+        [punto_izq_ensamble - random.randint(50, 100), 250],
+        [punto_izq_ensamble - random.randint(0, 50), random.randint(330, 350)],
+        [punto_izq_ensamble, 300],
+        [punto_der_ensamble, 300],
+        [punto_der_ensamble + random.randint(0, 50), random.randint(330, 350)],
+        [punto_der_ensamble + random.randint(50, 100), 270],
+        [punto_der_ensamble + random.randint(100, 150), 250],
+        [punto_der_ensamble + random.randint(150, 250), 400],
+        [punto_der_ensamble + random.randint(100, 150), 550],
+        [punto_der_ensamble + random.randint(50, 100), 520],
+        [punto_der_ensamble + random.randint(0, 50), random.randint(460, 480)],
+        [punto_der_ensamble, 500]
+    ], np.int32)
+
+    # Definir las coordenadas de inicio y fin de la línea
+    # Para separar el mango del filo
+    x1, y1 = punto_der_ensamble, 500
+    x2, y2 = punto_izq_ensamble, 500
+
+elif(tipo == 2):
+    # Definir los puntos en donde se podrá ensamblar el filo con el mango
+    punto_der_ensamble = random.randint(390, 430)
+    punto_izq_ensamble = random.randint(350, 370)
+    # Definir los puntos que definiran los bordes del mango
+    puntos_mango = np.array([
+        [punto_izq_ensamble, 350],
+        [punto_izq_ensamble - random.randint(0, 15), 1000],
+        [punto_der_ensamble + random.randint(0, 15), 1000],
+        [punto_der_ensamble, 350]
+    ], np.int32)
+
+    # Definir los puntos que definiran los bordes del filo
+    puntos_filo = np.array([
+        [punto_izq_ensamble, 350],
+        [punto_izq_ensamble - random.randint(0, 50), 250],
+        [punto_izq_ensamble - random.randint(0, 50), 200],
+        [punto_izq_ensamble + random.randint(0, 50) , random.randint(50, 150)],
+        [punto_der_ensamble + random.randint(0, 50), 200],
+        [punto_der_ensamble + random.randint(0, 50), 250],
+        [punto_der_ensamble, 350]
+    ], np.int32)
+
+    # Definir las coordenadas de inicio y fin de la línea
+    # Para separar el mango del filo
+    x1, y1 = punto_der_ensamble, 350
+    x2, y2 = punto_izq_ensamble, 350
+
 
 # Crear una máscara en blanco con el mismo tamaño que la imagen
 mascara_filo = np.zeros_like(imagen_filo)
 mascara_mango = np.zeros_like(imagen_mango)
 
 # Dibujar la forma de la espada en la máscara
-cv2.fillPoly(mascara_filo, [puntos_espada], (255, 255, 255))
+cv2.fillPoly(mascara_filo, [puntos_filo], (255, 255, 255))
 cv2.fillPoly(mascara_mango, [puntos_mango], (255, 255, 255))
 
 # Aplicar la máscara a la imagen para recortarla
@@ -191,22 +269,18 @@ imagen_filo_recortada = cv2.bitwise_and(imagen_filo, mascara_filo)
 imagen_mango_recortada = cv2.bitwise_and(imagen_mango, mascara_mango)
 
 # Superponer la imagen del filo sobre la del mango
-espada = cv2.addWeighted(imagen_filo_recortada, 1, imagen_mango_recortada, 1, 0)
-
-# Definir las coordenadas de inicio y fin de la línea
-x1, y1 = punto_der_ensamble, 800
-x2, y2 = punto_izq_ensamble, 800
+arma = cv2.addWeighted(imagen_filo_recortada, 1, imagen_mango_recortada, 1, 0)
 
 # Dibujar la línea negra en la imagen para separar
 # el filo del mango
 grosor = 1
-espada = cv2.line(espada, (x1, y1), (x2, y2), (0, 0, 0), grosor)
+arma = cv2.line(arma, (x1, y1), (x2, y2), (0, 0, 0), grosor)
 
-# Guardar la imagen en el archivo "Espada.png"
-cv2.imwrite("Espada.png", espada)
+# Guardar la imagen en el archivo "Arma.png"
+cv2.imwrite("Arma.png", arma)
 
 # Mostrar la imagen superpuesta
-cv2.imshow('Espada', espada)
+cv2.imshow('Arma', arma)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
