@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw
 import random
 import cv2
 import numpy as np
+import concurrent.futures
 
 #Definición de funciones:
 
@@ -19,21 +20,25 @@ def generar_color_con_restriccion(color_base, paletas, diferencia_minima):
         if diferencia_de_color(color_base, nuevo_color) >= diferencia_minima:
             return nuevo_color
 
+def procesar_celda(i, j, matriz_blanca, color_base, paletas, diferencia_minima):
+    # Seleccionar un color aleatorio de la paleta
+    color_restringido = generar_color_con_restriccion(color_base, paletas, diferencia_minima)
+    # Actualizar el color en la matriz
+    matriz_blanca[i][j] = color_restringido
+
+numero_de_hilos = 6  # Cambiar este valor según sea necesario
+
 # Función para generar una imagen de forma procedural con reglas utilizando una matriz
-def generacion_procedural(matriz_blanca, paletas, diferencia_minima):
+def generacion_procedural(matriz_blanca, paletas, diferencia_minima, max_workers):
     # Seleccionar una paleta aleatoria
     paleta = random.choice(paletas)
 
     # Generar un color base aleatorio
     color_base = random.choice(paleta)
-
-    # Iterar sobre las filas y columnas de la matriz
-    for i in range(filas):
-        for j in range(columnas):
-            # Seleccionar un color aleatorio de la paleta
-            color_restringido = generar_color_con_restriccion(color_base, paletas, diferencia_minima)
-            # Actualizar el color en la matriz
-            matriz_blanca[i][j] = color_restringido
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(procesar_celda, i, j, matriz_blanca, color_base, paletas, diferencia_minima) for i in range(filas) for j in range(columnas)]
+        concurrent.futures.wait(futures)
         
 # Empezamos con las estadísticas
 # AF: Ataque físico
@@ -107,8 +112,8 @@ matriz_blanca_filo = [[(0, 0, 0) for _ in range(columnas)] for _ in range(filas)
 matriz_blanca_mango = [[(0, 0, 0) for _ in range(columnas)] for _ in range(filas)]
 
 # Generar la matriz de colores de forma procedural
-generacion_procedural(matriz_blanca_filo, paletas_filos, 400)
-generacion_procedural(matriz_blanca_mango, paletas_mangos, 200)
+generacion_procedural(matriz_blanca_filo, paletas_filos, 400, numero_de_hilos)
+generacion_procedural(matriz_blanca_mango, paletas_mangos, 200, numero_de_hilos)
 
 # Crear una nueva imagen en blanco
 imagen_filo = Image.new("RGB", (ancho, altura), "black")
