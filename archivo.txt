@@ -1,0 +1,10 @@
+Ataque fisico 45
+Ataque magico 40
+Velocidad de ataque 36
+Robo de vida 30
+Durabilidad 19
+Probabilidad de critico 77
+Dano critico 38
+Efecto/s Fuego
+        
+        
