@@ -1,0 +1,342 @@
+from PIL import Image, ImageDraw
+import random
+import cv2
+import numpy as np
+
+# Dimensiones de la imagen y de la matriz
+ancho = 600
+altura = 1010
+filas = 50
+columnas = 30
+
+# Tamaño de cada cuadrado
+tamano_textura = ancho // columnas
+
+# Paletas de colores
+paletas_filos = [
+    [(245, 245, 220), (210, 180, 140), (160, 82, 45), (139, 69, 19)],  # Paleta de tonos tierra
+    [(255, 255, 255), (0, 0, 255), (255, 0, 0), (255, 255, 0)],        # Paleta de colores primarios
+    [(128, 0, 128), (0, 128, 128), (255, 165, 0), (255, 69, 0)],       # Paleta de colores vivos
+    [(173, 216, 230), (25, 25, 112),(64, 224, 208),(127, 255, 212)],   # Paleta de colores marinos
+    [(255, 0, 0),(255, 165, 0),(255, 255, 0),(128, 30, 0)],            # Paleta de colores fuego
+    [(139, 0, 0),(255, 0, 0),(255, 99, 71),(165, 42, 42)],             # Paleta de colores sangrientos
+    [(152, 255, 152),(50, 205, 50),(0, 128, 0),(144, 238, 144)],       # Paleta de colores menta
+    [(255, 0, 255),(128, 20, 150),(250, 215, 0),(250, 250, 250)]       # Paleta de colores de lujo
+]
+
+paletas_mangos = [    [(245, 245, 220), (210, 180, 140), (160, 82, 45), (139, 69, 19)],     # Paleta de tonos tierra
+    [(128, 0, 128), (0, 128, 128), (255, 165, 0), (255, 69, 0)],          # Paleta de colores vivos
+    [(139, 69, 19), (139, 90, 43), (222, 184, 135), (205, 133, 63)],      # Tonos de madera
+    [(192, 192, 192), (128, 128, 128), (169, 169, 169), (105, 105, 105)]  # Tonos de metal
+]
+
+HASTA EL MOMENTO T(N) = 8K
+
+# Crear una nueva matriz para representar los colores de los cuadrados
+matriz_Blanca_Filo = [[(0, 0, 0) for _ in range(columnas)] for _ in range(filas)]
+matriz_Blanca_Mango = [[(0, 0, 0) for _ in range(columnas)] for _ in range(filas)]
+
+HASTA EL MOMENTO T(N) = 2(n x m) + 8K
+
+def diferencia_de_color(color1, color2):
+    # Calcula la diferencia total de color entre dos colores RGB
+    r_diff = abs(color1[0] - color2[0])
+    g_diff = abs(color1[1] - color2[1])
+    b_diff = abs(color1[2] - color2[2])
+    return r_diff + g_diff + b_diff
+
+T(n) = 12k diferencia_de_color
+
+HASTA EL MOMENTO T(N) = 2(n x m) + 8K
+
+def generar_color_con_restriccion(color_base, paletas, diferencia_minima):
+    # Genera un color aleatorio dentro de una cierta diferencia mínima de color de color_base
+    while True:
+        nuevo_color = random.choice(random.choice(paletas))
+        if diferencia_de_color(color_base, nuevo_color) >= diferencia_minima:
+            return nuevo_color
+
+EL WHILE TRUE EN EL PEOR DE LOS CASOS ES 32 (TOMANDO EN CUENTA EL TAMAÑO DE LA MATRIZ DE COLORES Y PALETAS)
+T(n) = 32(k + (4 x 12) + 2k + k)
+T(n) = 32(4k + 48)
+T(n) = 128k + 48 generar_color_con_restriccion
+
+HASTA EL MOMENTO T(N) = 2(n x m) + 8k
+
+# Función para generar una imagen de forma procedural con reglas utilizando una matriz
+def generacion_procedural(matriz_Blanca_Filo, paletas, diferencia_minima):
+    # Seleccionar una paleta aleatoria
+    paleta = random.choice(paletas)
+    
+    # Generar un color base aleatorio
+    color_base = random.choice(paleta)
+
+    # Iterar sobre las filas y columnas de la matriz
+    for i in range(filas):
+        for j in range(columnas):
+            # Seleccionar un color aleatorio de la paleta
+            color_restringido = generar_color_con_restriccion(color_base, paletas, diferencia_minima)
+            # Actualizar el color en la matriz
+            matriz_Blanca_Filo[i][j] = color_restringido
+
+T(n) = k + 12 + k + 4 + n (m (k + 32(4k + 48) + k))
+T(n) = 2k + 16 + n (m (2k + 128k + 48)
+T(n) = 2k + 16 + n (m (130k + 48)
+T(n) = 2k + 16 + n (130km + 48m)
+T(n) = 2k + 16 + 130knm + 48nm
+T(n) = 48nm + 130knm + 2k + 16 generacion_procedural
+
+HASTA EL MOMENTO T(N) = 2(n x m) + 8k
+
+# Generar la matriz de colores de forma procedural
+generacion_procedural(matriz_Blanca_Filo, paletas_filos, 400)
+generacion_procedural(matriz_Blanca_Mango, paletas_mangos, 200)
+
+HASTA EL MOMENTO T(N) = 2(n x m)+ 260knm + 12k + O(n x m)+ O(1)
+
+# Crear una nueva imagen en blanco
+imagen_filo = Image.new("RGB", (ancho, altura), "black")
+imagen_mango = Image.new("RGB", (ancho, altura), "black")
+
+# Crear un objeto ImageDraw para dibujar en la imagen
+DrawFilo = ImageDraw.Draw(imagen_filo)
+DrawMango = ImageDraw.Draw(imagen_mango)
+
+T(n) = 5529600 + 2k
+
+HASTA EL MOMENTO T(N) = 2(n x m)+ 264knm + 12k + O(n x m)+ O(1) + 5529600 + 2k
+HASTA EL MOMENTO T(N) = 2(n x m)+ 264knm + 14k + O(n x m)+ O(1) + 5529600
+
+# Dibujar los cuadrados utilizando los colores de la matriz
+for i in range(filas):
+    for j in range(columnas):
+        # Obtener el color de la matriz
+        color_filo = matriz_Blanca_Filo[i][j]
+        color_mango = matriz_Blanca_Mango[i][j]
+        # Calcular las coordenadas del cuadrado
+        #Para el filo:
+        f_x0 = j * tamano_textura
+        f_y0 = i * tamano_textura
+        f_x1 = f_x0 + tamano_textura
+        f_y1 = f_y0 + tamano_textura
+        #Para el mango:
+        m_x0 = j * tamano_textura
+        m_y0 = i * tamano_textura
+        m_x1 = m_x0 + tamano_textura
+        m_y1 = m_y0 + tamano_textura
+        # Dibujar el cuadrado
+        DrawFilo.rectangle([(f_x0, f_y0), (f_x1, f_y1)], fill=color_filo)
+        DrawMango.rectangle([(m_x0, m_y0), (m_x1, m_y1)], fill=color_mango)
+T(N) = n (m (k + k + (2k + 2k + 2k + 2k) + (2k +2k +2k +2k) + (921600)))
+T(N) = n (m (18k + 921600)
+T(N) = 18knm + 921600nm
+
+HASTA EL MOMENTO T(N) = 2(n x m) + 282knm + 921600nm + 14k + O(n x m)+ O(1) + 5529600
+
+# Guardar la imagen generada
+imagen_filo.save("Textura.png")
+imagen_mango.save("Textura_Mango.png")
+
+T(N) = 2764800k --> T(N) = 5529600k
+HASTA EL MOMENTO T(N) = 2(n x m) + 282knm + 921600nm + 5529614k + O(n x m)+ O(1) + 5529600
+
+# Cargar la imagen generada con cv2
+imagen_filo = cv2.imread('Textura.png')
+imagen_mango = cv2.imread('Textura_Mango.png')
+
+T(N) = 2764800k --> T(N) = 5529600k
+HASTA EL MOMENTO T(N) = 2(n x m) + 282knm + 921600nm + 11059214k + O(n x m)+ O(1) + 5529600
+
+#Definir los puntos en donde se podrá ensamblar el filo con el mango
+punto_der_ensamble = random.randint(350, 450)
+punto_izq_ensamble = random.randint(150, 250)
+
+T(N) = 2(k + O(1))
+T(N) = 2k + O(1)
+HASTA EL MOMENTO T(N) = 2(n x m) + 282knm + 921600nm + 11059216k + O(n x m)+ O(1) + 5529600
+
+# Definir los puntos del mango
+puntos_mango = np.array([[punto_izq_ensamble, 800],
+                          [punto_izq_ensamble - random.randint(0,15), random.randint(795, 820)],
+                          [punto_izq_ensamble - random.randint(0,15), random.randint(820, 880)],
+                          [random.randint(250, 290), random.randint(820, 880)],
+                          [random.randint(270, 295), random.randint(900, 1100)],
+                          [random.randint(305, 325), random.randint(900, 1100)],
+                          [random.randint(310, 350), random.randint(820, 880)],
+                          [punto_der_ensamble + random.randint(0,15), random.randint(820, 880)],
+                          [punto_der_ensamble + random.randint(0,15), 800],          
+                          [punto_der_ensamble, 800]], np.int32)
+
+T(N) = k ( 19k )
+HASTA EL MOMENTO T(N) = 282knm + 921602nm + 19k^2 + 11059216k + O(n x m)+ O(1) + 5529600
+
+# Definir los puntos de la espada
+puntos_espada = np.array([[punto_der_ensamble, 800],
+                          [random.randint(350, 450), random.randint(750, 780)],
+                          [random.randint(350, 450), random.randint(550, 650)],
+                          [random.randint(350, 450), random.randint(350, 450)],
+                          [random.randint(350, 450), random.randint(150, 250)], 
+                          [random.randint(150, 300), random.randint(50, 150)], 
+                          [random.randint(150,250), random.randint(150,250)],
+                          [random.randint(150,250), random.randint(450,550)],
+                          [random.randint(150,250), random.randint(650,750)],         
+                          [punto_izq_ensamble, 800]], np.int32)
+
+T(N) = k ( 16k )
+HASTA EL MOMENTO T(N) = 282knm + 921602nm + 35k^2 + 11059216k + O(n x m)+ O(1) + 5529600
+
+# Crear una máscara en blanco con el mismo tamaño que la imagen
+mascara_filo = np.zeros_like(imagen_filo)
+mascara_mango = np.zeros_like(imagen_mango)
+
+T(N) = 2k + 2nm
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059218k + O(n x m)+ O(1) + 5529600
+
+# Dibujar la forma de la espada en la máscara
+cv2.fillPoly(mascara_filo, [puntos_espada], (255, 255, 255))
+cv2.fillPoly(mascara_mango, [puntos_mango], (255, 255, 255))
+
+T(N) = 2(10 x 921600) = 18432000
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059218k + O(n x m)+ O(1) + 23961600
+
+# Aplicar la máscara a la imagen para recortarla
+imagen_filo_recortada = cv2.bitwise_and(imagen_filo, mascara_filo)
+imagen_mango_recortada = cv2.bitwise_and(imagen_mango, mascara_mango)
+
+T(N) = 2(921600 x 3) = 5529600 + 2k
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059220k + O(n x m)+ O(1) + 29491200
+
+# Superponer imagen_filo_recortada sobre imagen_mango_recortada
+Espada = cv2.addWeighted(imagen_filo_recortada, 1, imagen_mango_recortada, 1, 0)
+
+T(N) = 2(921600 x 3) = 5529600 + k
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059221k + O(n x m)+ O(1) + 35020800
+
+# Definir las coordenadas de inicio y fin de la línea
+x1, y1 = punto_der_ensamble, 800
+x2, y2 = punto_izq_ensamble, 800
+
+T(N) = 4k
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059225k + O(n x m)+ O(1) + 35020800
+
+# Dibujar la línea negra en la imagen
+grosor = 1
+Espada = cv2.line(Espada, (x1, y1), (x2, y2), (0,0,0), grosor)
+
+T(N) = 2k + 300
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059227k + O(n x m)+ O(1) + 35021100
+
+#Guardar la imagen en el archivo "Espada.png"
+cv2.imwrite("Espada.png", Espada)
+
+T(N) = k
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059228k + O(n x m)+ O(1) + 35021100
+
+# Mostrar la imagen superpuesta
+cv2.imshow('Espada', Espada)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+T(N) = k + k + k
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059231k + O(n x m)+ O(1) + 35021100
+
+# Nivel del jugador (constante)
+nivel = 13
+
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059232k + O(n x m)+ O(1) + 35021100
+
+# Empezamos con las estadísticas
+# AF: Ataque físico
+# AM: Ataque mágico
+# VA: Velocidad de ataque
+# RV: Robo de vida
+# Dur: Durabilidad
+# PC: Probabilidad de crítico
+# DC: Daño crítico
+def Estadisticas(nivel):
+    AF=random.randint(nivel*1,nivel*5)
+    AM=random.randint(nivel*1,nivel*5)
+    VA=random.randint(nivel*1,nivel*5)
+    RV=random.randint(nivel*1,nivel*5)
+    Dur=random.randint(1,100)
+    PC=random.randint(1,100)
+    DC=random.randint(1,100)
+    efecto=Efecto()
+    arma=[AF,AM,VA,RV,Dur,PC,DC,efecto]
+    
+    return(arma)
+
+T(N) = 16k + 7k + k + k + 2k + 7
+T(N) = 27k + 7
+
+def Efecto():
+    efecto=random.choice(["Fuego","Hielo","Veneno","Luz","Oscuridad","Aturdimiento","Looteo"])
+    return(efecto)
+
+T(N) = k + 7 + k = 2k + 7
+
+def Arma(nivel):
+    arma=Estadisticas(nivel)
+    
+    prob=random.randint(1,100)
+    if (prob<=10):
+        efecto2=Efecto()
+        arma=np.append(arma,efecto2)
+    else:
+        arma=np.append(arma,"   ")
+    if (prob==1):
+        efecto3=Efecto()
+        arma=np.append(arma,efecto3)
+    else:
+        arma=np.append(arma,"   ")
+    return arma
+
+T(N) = k + 27k + 7 + 2k + k + (k + 2k + 7 + k + 9) + k + (k + 2k + 7 + k + 10) + k
+T(N) = 41k + 40
+
+arma=Arma(nivel)
+datos_arma=["Ataque fisico","Ataque magico","Velocidad de ataque","Robo de vida","Durabilidad","Probabilidad de critico","Dano critico","Efecto/s","    ","    "]
+datos_finales=np.array([[datos_arma],[arma]])
+datos_finales=datos_finales.T
+
+T(N) = k + 41k + 40 + k + 2 * 10 + k + 2 * 10
+T(N) = 44k + 80
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059276k + O(n x m)+ O(1) + 35021180
+
+ARREGLANDO
+HASTA EL MOMENTO T(N) = 282knm + 921604nm + 35k^2 + 11059276k + 48nm + 16 + 35021180
+HASTA EL MOMENTO T(N) = 282knm + 921652nm + 35k^2 + 11059276k+ 35021196
+
+with open("archivo.txt", "w") as archivo:
+    for fila in datos_finales:
+        fila_str = " ".join(map(str, fila))
+        archivo.write(fila_str + "\n")
+    archivo.close()
+
+ES COMPLICADO DE CALCULAR, YA QUE DEPENDE DEL TAMAÑO DEL ARCHIVO, Y AFECTA TAN POCO AL CÓDIGO QUE SE CONSIDERARÁ COMO O(1)
+
+FINAL T(N) = 282knm + 921652nm + 35k^2 + 11059276k + 35021196
+FINAL O(n x m)
+
+Agregando y modificando:
+
+Caso espadas: T(N)
+tipo = random.choice([0,1,2])  # Con T(n) = 3k (Teniendo en cuenta que toca 0, el primer caso a analizar siendo este la espada, se añade 1k)
+con 19k para el mango y 16k para el filo T(n) = k(16k) = 16k^2
+
+T(N) = 282knm + 921652nm + 35k^2 + 11059279k + 35021196
+O(n x m)
+
+Caso hacha:
+tipo = random.choice([0,1,2])  # Con T(n) = 4k (Caso 0 falla, luego revisa caso 1)
+con 4k para el mango y 32k para el filo T(n) = k(36k) = 36k^2
+
+T(N) = 282knm + 921652nm + 36k^2 + 11059279k + 35021196
+O(n x m)
+
+Caso lanza: 
+tipo = random.choice([0,1,2])  # Con T(n) = 5k (Caso 0, 1 y 2)
+con 4k para el mango y 11k para el filo T(n) = k(15k) = 15k^2
+
+T(N) = 282knm + 921652nm + 15k^2 + 11059279k + 35021196
+O(n x m)
