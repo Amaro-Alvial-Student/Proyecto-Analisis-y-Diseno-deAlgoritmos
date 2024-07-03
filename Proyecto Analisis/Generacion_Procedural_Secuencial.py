@@ -2,7 +2,6 @@ from PIL import Image, ImageDraw
 import random
 import cv2
 import numpy as np
-import concurrent.futures
 
 #Definición de funciones:
 
